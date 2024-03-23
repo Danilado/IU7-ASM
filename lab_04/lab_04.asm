@@ -15,6 +15,7 @@ D1 SEGMENT para public 'DATA'
         MAXSUM dw 0
         MAXSUMI db 0
         BUFCX dw 0
+        MAXLEN db 9
 D1 ENDS
 
 CSEG SEGMENT para public 'CODE'
@@ -59,6 +60,8 @@ input_matrix proc near
         mov al, ROWS
         mul COLS
 
+        mov I, 0
+
         mov bx, offset MATRIX
         mov di, 0
         
@@ -70,17 +73,24 @@ input_matrix_loop:
 
         mov [bx + di], al
 
+        call space
+
+        inc di
         mov ax, di
-        inc ax
+        div MAXLEN
+        mov al, ah
+        mov ah, 0
         div COLS
         cmp ah, 0
 
-        call space
         jne noendl ; если остаток i%COLS != 0 не делаем \n
+        inc I
+        xor ax, ax
+        mov al, I
+        mul MAXLEN
+        mov di, ax
         call endl
 noendl:
-
-        inc di
         loop input_matrix_loop
 
         ret
@@ -92,9 +102,9 @@ find_row_sum proc near
         mov cl, COLS
 
         mov SUM, 0
-        mov al, I
 
-        mul COLS
+        mov al, I
+        mul MAXLEN
         mov di, ax
         
         mov bx, offset MATRIX
@@ -143,13 +153,13 @@ replace_maxsum_i proc near
 
         xor ax, ax
         mov al, MAXSUMI
-        mul COLS
+        mul MAXLEN
         mov di, ax
 
         xor ax, ax
         mov al, ROWS
         dec ax
-        mul COLS
+        mul MAXLEN
         mov si, ax
 
         xor cx, cx
@@ -168,6 +178,8 @@ print_matrix proc near
         mov bx, offset MATRIX
         mov si, 0
 
+        mov i, 0
+
         xor ax, ax
         mov al, ROWS
         mul COLS
@@ -185,9 +197,17 @@ print_matrix_loop:
         inc si
 
         mov ax, si
+        div MAXLEN
+        mov al, ah
+        xor ah, ah
         div COLS
         cmp ah, 0
         jne noendlprint
+        inc I
+        xor ax, ax
+        mov al, I
+        mul MAXLEN
+        mov si, ax
         call endl
 noendlprint:
 
