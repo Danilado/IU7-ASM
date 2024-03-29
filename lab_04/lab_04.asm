@@ -32,7 +32,7 @@ endl endp
 
 space proc near
         mov ah, 02
-        mov dl, 32 
+        mov dl, 32
         int 21h
         ret
 space endp
@@ -66,31 +66,33 @@ input_matrix proc near
         mov di, 0
         
         mov cx, ax
-input_matrix_loop:
-        mov ah, 01h
-        int 21h
-        sub al, '0'
+        input_matrix_loop:
+                mov ah, 01h
+                int 21h
+                sub al, '0'
 
-        mov [bx + di], al
+                mov [bx + di], al
 
-        call space
+                call space
 
-        inc di
-        mov ax, di
-        div MAXLEN
-        mov al, ah
-        mov ah, 0
-        div COLS
-        cmp ah, 0
+                inc di
+                mov ax, di
+                div MAXLEN 
+                mov al, ah
+                xor ah, ah
+                
+                div COLS
+                
+                cmp ah, 0
 
-        jne noendl ; если остаток i%COLS != 0 не делаем \n
-        inc I
-        xor ax, ax
-        mov al, I
-        mul MAXLEN
-        mov di, ax
-        call endl
-noendl:
+                jne noendl ; если остаток i%COLS != 0 не делаем \n
+                        inc I
+                        xor ax, ax
+                        mov al, I
+                        mul MAXLEN
+                        mov di, ax
+                        call endl
+                noendl:
         loop input_matrix_loop
 
         ret
@@ -186,30 +188,30 @@ print_matrix proc near
 
         mov cx, ax
         xor ax, ax
-print_matrix_loop:
-        mov ah, 02
-        mov dl, [bx + si]
-        add dl, '0'
-        int 21h
+        print_matrix_loop:
+                mov ah, 02
+                mov dl, [bx + si]
+                add dl, '0'
+                int 21h
 
-        call space
+                call space
 
-        inc si
+                inc si
 
-        mov ax, si
-        div MAXLEN
-        mov al, ah
-        xor ah, ah
-        div COLS
-        cmp ah, 0
-        jne noendlprint
-        inc I
-        xor ax, ax
-        mov al, I
-        mul MAXLEN
-        mov si, ax
-        call endl
-noendlprint:
+                mov ax, si
+                div MAXLEN
+                mov al, ah
+                xor ah, ah
+                div COLS
+                cmp ah, 0
+                jne noendlprint
+                        inc I
+                        xor ax, ax
+                        mov al, I
+                        mul MAXLEN
+                        mov si, ax
+                        call endl
+                noendlprint:
 
         loop print_matrix_loop
 
