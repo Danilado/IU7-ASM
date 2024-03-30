@@ -41,7 +41,7 @@ input_number proc near
 
         xor dx, dx
         xor cx, cx
-        mov cl, 3       ; 8-я система, одна цифра - 3 двоичных
+        mov cl, 3
 
         number_input_loop:
                 mov ah, 1
@@ -51,7 +51,7 @@ input_number proc near
                 je number_input_loop_break
                         sub al, '0'
                         
-                        sal dx, cl
+                        sal dx, cl       ; dx << 3
                         add dl, al
                 jmp number_input_loop
         number_input_loop_break:

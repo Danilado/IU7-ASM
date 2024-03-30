@@ -22,8 +22,7 @@ build_ubin proc near
                 mov unbin_text[di], dl
 
                 dec di
-                mov cl, 1
-                sar ax, cl      ; ax >> 1
+                sar ax, 1      ; ax >> 1
 
                 cmp di, -1
                 jne set_bit_loop

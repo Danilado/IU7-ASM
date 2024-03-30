@@ -40,7 +40,6 @@ process_bin proc near
         mov ax, NUM
         xor bx, bx
         xor cx, cx
-        mov cl, 1
 
         bin_proc_loop:
                 cmp bx, 16
@@ -49,7 +48,7 @@ process_bin proc near
                 cmp ax, 0
                 je bin_proc_loop_end
 
-                        sar ax, cl      ; ax >> 1
+                        sar ax, 1      ; ax >> 1
                         inc bx
                 jmp bin_proc_loop
         bin_proc_loop_end:

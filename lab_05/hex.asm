@@ -40,6 +40,7 @@ build_shex proc near
         and ax, charmask
 
         mov di, 1       ; 2 т.к. обрезаем до char
+        mov cl, 4
 
         set_4bit_loop:
                 mov dx, ax
@@ -56,7 +57,6 @@ build_shex proc near
                 mov hex_text[di], dl
 
                 dec di
-                mov cl, 4
                 sar ax, cl      ; ax >> 4
  
                 cmp di, -1
