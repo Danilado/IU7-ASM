@@ -14,7 +14,7 @@ CSEG SEGMENT
 
     handler proc near
         pushf
-        ; call dword ptr CS:old_handler
+        ; call CS:old_handler
 
         mov ah, 02h ; CH:CL:DH
         int 1ah
@@ -88,8 +88,8 @@ CSEG SEGMENT
         mov ax, 4c00h
         int 21h
 
-        init_msg db 'lab_06 init$'   
-        exit_msg db 'lab_06 stop$'
+        init_msg db "lab_06 init", 10, 13, '$'   
+        exit_msg db "lab_06 stop", 10, 13, '$'
 CSEG ENDS
 END MAIN
     
