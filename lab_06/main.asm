@@ -1,94 +1,95 @@
-CSEG SEGMENT para public "CODE"
-  assume CS:CSEG, DS:CSEG
-  org 100h
+.MODEL tiny 
 
-  main:
-    jmp init
-    timestamp db 0
-    speed db 00011111b
-    old_inter dd ?
-    flag db 42
-    init_msg db "lab_06 initialised$"
-    stop_msg db "lab_06 stopped$"
+CSEG SEGMENT 
+    assume CS:CSEG
+    org 100h            
 
-  change_speed proc near:
-    mov al, 00f3h
-    out 60h, al
-    mov al, speed
-    out 60h, al
+    main:
+        jmp init
+        
+        speed db 00011111b
+        flag db 42
+        cur_time db 0
+        old_handler dd 0
 
-    dec speed
-    cmp speed, 00000000b
-    jne noreset
+    handler proc near
+        pushf
+        ; call dword ptr CS:old_handler
 
-    mov speed, 00011111b
+        mov ah, 02h ; CH:CL:DH
+        int 1ah
 
-    noreset:
+        cmp dh, cur_time    
+        je no_change_speed  
 
-    ret
-  change_speed endp
+        mov cur_time, dh    
+        dec speed           
 
-  inter proc:
-    pushf
+        mov al, 0F3h
+        out 60h, al 
+        mov al, speed
+        out 60h, al
 
-    call ptr old_inter
+        cmp speed, 0
+        jne no_change_speed
 
-    mov ah, 02h ; CH:CL:DH <- Время
-    int 1h      ; 1h - Для работы с таймером
+        mov speed, 011111b
 
-    cmp dh, timestamp
-    je skip
-      mov timestamp, dh
+        no_change_speed:
 
-      call change_speed
+        popf
+        iret
+    HANDLER endp
 
-    skip:
-    popf
-    
-    ret
-  inter endp
+    init:       
+        mov ax, 351ch ; предыдущее прерывание
+        int 21h
 
-  init proc near:
-    mov ax, 3508h ; 35h -> получить старые данные о прерывании 08h
-    int 21h       ;es - адрес сегмента
-                  ;bx - смещение.
+        cmp es:flag, 42   
+        je remove                  
 
-    cmp es:flag, 42 ; если мой флажок
-    je remove
+        mov word ptr old_handler, bx  
+        mov word ptr old_handler + 2, es    
 
-    mov word ptr old_inter, bx
-    mov word ptr old_inter + 1, es
+        mov ax, 251ch              
+        mov dx, offset HANDLER
+        int 21h                     
 
-    mov ax, 2508h ; 25h -> установить в таблицу адрес прерывания 08h
-    mov dx, offset inter
-    int 21h
+        mov dx, offset init_msg     
+        mov ah, 09h
+        int 21h                            
 
-    mov ah, 09h
-    mov dx, offset init_msg
-    int 21h
+        mov ah, 27h                         
+        mov dx, offset init ; init - последий байт программы (не обработчик прерывашки)
+        int 27h             ; Делаем резидентом
 
-    mov dx, offset init
-    int 27h
-  init endp
+    remove:
+        mov dx, offset exit_msg             
+        mov ah, 09h
+        int 21h
 
-  remove proc near:
-    mov al, 0f3h
-    out 60h, al
-    mov al, 0
-    out 60h, al
+        mov al, 0F3h    
 
-    mov dx, word ptr old_inter
-    mov ds, word ptr old_inter + 2
-    mov ax, 2508h
+        out 60h, al    
 
-    mov ah, 09h
-    mov dx, offset stop_msg
-    int 21h
+        ;устанавливаем период автоповтора 30.0, задержку включения режима автоповтора 250 мс (восстанавливаем дефолтные значения)
+        mov al, 0
+        out 60h, al                 
+        
+        ; устанавливаем период автоповтора 30.0, задержку включения режима автоповтора 250 мс (восстанавливаем дефолтные значения)
+        mov dx, word ptr es:old_handler                       
+        mov ds, word ptr es:old_handler + 2
+        mov ax, 251ch
+        int 21h                  
 
-    mov ax, 4c00h
-    int 21h
-  remove endp
+        mov ah, 49h                         
+        int 21h
 
+        mov ax, 4c00h
+        int 21h
+
+        init_msg db 'lab_06 init$'   
+        exit_msg db 'lab_06 stop$'
 CSEG ENDS
-
-END main
+END MAIN
+    
