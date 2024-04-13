@@ -77,9 +77,6 @@ CSEG SEGMENT
         mov ax, 251ch
         int 21h
 
-        mov ah, 49h
-        int 21h
-
         mov ax, 4c00h
         int 21h
 
