@@ -20,7 +20,7 @@ CSEG SEGMENT
         int 1ah
 
         cmp dh, timestamp
-        je no_change_speed
+        je skip
 
         mov timestamp, dh
         dec speed
@@ -31,11 +31,11 @@ CSEG SEGMENT
         out 60h, al
 
         cmp speed, 0
-        jne no_change_speed
+        jne skip
 
         mov speed, 011111b
 
-        no_change_speed:
+        skip:
 
         iret
     inter endp
