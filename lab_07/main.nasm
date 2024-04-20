@@ -9,19 +9,32 @@ global _copy_string
 ;                             ^     ^     ^     ^
 ;                           arg1  arg2  arg3 ....
 
-; rdi -> char* src
-; rsi -> char* dst
+; rdi -> char* dst
+; rsi -> char* src
 ; rdx -> size_t length 
 _copy_string:
-        push rax
-
         mov rcx, rdx
-        mov rax, rsi
-        lea rsi, [rdi]
-        lea rdi, [rax]
-        rep movsb
 
-        pop rax
+        cmp rsi, rdi
+        je skip         ; dst == src
+        jl backwards    ; if src < dst
+
+                rep movsb ; копировать rsi в rdi rcx раз
+                jmp skip
+
+backwards:              ; dst > src
+                std ; обратный ход строки (movsb будет
+                    ; уменьшать rdi и rsi)
+
+                add rdi, rcx ; смещаем указатели
+                add rsi, rcx ; на длину строки
+                inc rcx ; чтобы учитывать \0
+
+                rep movsb
+
+                cld ; убираем обратный ход строки
+
+skip:
         ret
 
 end

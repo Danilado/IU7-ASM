@@ -17,6 +17,7 @@ void _copy_string(char *, char *, size_t);
 // )
 
 int main(void) {
+
   str_t str = "test string";
   size_t len = 0;
 
@@ -62,19 +63,31 @@ int main(void) {
         %% перед регистрами, чтобы gcc было проще отличить регистры от операндов
   */
 
-  str_t dup_str = "";
+  str_t dup_str = "stroka nomer 2 ona tipa drugaya";
 
   printf("BEFORE CALL\n");
   printf("str:     %s\n", str);
   printf("dup_str: %s\n", dup_str);
   printf("len: %zu\n", len);
 
-  _copy_string(str, dup_str, len);
+  _copy_string(dup_str, str, len);
 
   printf("AFTER CALL\n");
   printf("str:     %s\n", str);
   printf("dup_str: %s\n", dup_str);
   printf("len: %zu\n", len);
+
+  str_t mo_test_str = "test string for memory overlap";
+
+  printf("Memory overlap test\n");
+  printf("str:      %s\n", mo_test_str);
+  printf("str + 10: %s\n", mo_test_str + 10);
+
+  _copy_string(mo_test_str, mo_test_str + 10, strlen(mo_test_str + 10));
+
+  printf("Memory overlap res\n");
+  printf("str:      %s\n", mo_test_str);
+  printf("str + 10: %s\n", mo_test_str + 10);
 
   return 0;
 }
