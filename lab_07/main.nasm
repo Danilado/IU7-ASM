@@ -1,8 +1,8 @@
 bits 64
 
-section .text
 global _copy_string
 
+section .text
 ; User-level applications use as integer registers for passing the sequence 
 ; %rdi, %rsi, %rdx, %rcx, %r8 and %r9. 
 ; The kernel interface uses %rdi, %rsi, %rdx, %r10, %r8 and %r9.
@@ -19,6 +19,7 @@ _copy_string:
         je skip         ; dst == src
         jl backwards    ; if src < dst
 
+                inc rcx ; чтобы учитывать \0
                 rep movsb ; копировать rsi в rdi rcx раз
                 jmp skip
 

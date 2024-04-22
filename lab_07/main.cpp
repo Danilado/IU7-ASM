@@ -77,17 +77,29 @@ int main(void) {
   printf("dup_str: %s\n", dup_str);
   printf("len: %zu\n", len);
 
-  str_t mo_test_str = "test string for memory overlap";
+  // str_t mo_test_str = "test string for memory overlap";
 
-  printf("Memory overlap test\n");
-  printf("str:      %s\n", mo_test_str);
-  printf("str + 10: %s\n", mo_test_str + 10);
+  // printf("Memory overlap test\n");
+  // printf("str:      %s\n", mo_test_str);
+  // printf("str + 10: %s\n", mo_test_str + 10);
 
-  _copy_string(mo_test_str, mo_test_str + 10, strlen(mo_test_str + 10));
+  // _copy_string(mo_test_str, mo_test_str + 10, strlen(mo_test_str + 10));
+
+  // printf("Memory overlap res\n");
+  // printf("str:      %s\n", mo_test_str);
+  // printf("str + 10: %s\n", mo_test_str + 10);
+
+  str_t mo_test_str_2 = "test string for memory overlap";
+
+  printf("Memory overlap test 2\n");
+  printf("str:      %s\n", mo_test_str_2);
+  printf("str + 10: %s\n", mo_test_str_2 + 10);
+
+  _copy_string(mo_test_str_2 + 10, mo_test_str_2, strlen(mo_test_str_2));
 
   printf("Memory overlap res\n");
-  printf("str:      %s\n", mo_test_str);
-  printf("str + 10: %s\n", mo_test_str + 10);
+  printf("str:      %s\n", mo_test_str_2);
+  printf("str + 10: %s\n", mo_test_str_2 + 10);
 
   return 0;
 }
