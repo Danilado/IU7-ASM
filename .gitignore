@@ -4,3 +4,7 @@
 *.EXE
 *.COM
 *.o
+*.dump
+*.s
+*.lastbuildstate
+*/out/
