@@ -1,6 +1,6 @@
-#include <cstdlib>
-
 #include <cmath>
+#include <cstdlib>
+#include <iomanip>
 #include <iostream>
 using std::cin;
 using std::cout;
@@ -16,6 +16,8 @@ using std::endl;
 #endif
 
 int main(void) {
+
+  cout.precision(20);
 
 #ifndef NO_TEST
   const size_t run_count = 1000000;
@@ -177,7 +179,6 @@ int main(void) {
          << endl;
   }
 #endif
-
   {
     double pi = 3.14;
 
@@ -210,6 +211,7 @@ int main(void) {
   cin >> e;
   cout << "input iteration count: ";
   cin >> iters;
+  cout << endl;
 
   double root = find_root(func, s, e, iters);
   cout << "f(" << root << ") = " << func(root) << endl;

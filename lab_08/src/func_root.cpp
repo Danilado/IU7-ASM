@@ -31,7 +31,6 @@ double func(double x) {
                                      // вытолкнуть это значение из стека
       : "=m"(res)         // на выход
       : "m"(x), "m"(five) // на вход
-      : "eax"             //
   );
 
   return res;
@@ -65,25 +64,52 @@ double find_root(double (*f)(double), double start, double end,
   for (size_t i = 0; i < iterations; ++i) {
     double mid = get_midpoint(left, right);
 
+    double f_a = f(left);
     double f_c = f(mid);
+
+    //     if (!f_c) {
+    //       left = right = mid;
+    //       break;
+    //     }
+
+    //     printf("%lf %lf %lf %lf\n", left, right, mid, f_c);
+
+    //     int flags = 0;
+    //
+    //     asm(".intel_syntax noprefix  \n\t" // STACK:
+    //         "fld %1                  \n\t" // f_c
+    //         "fld %2                  \n\t" // 0, f_c
+    //         "fcompp                  \n\t" // сравннить и вытолкнуть
+    //         "xor eax, eax            \n\t"
+    //         "fstsw ax                \n\t"
+    //         "mov %0, eax             \n\t"
+    //         : "=r"(flags)
+    //         : "m"(f_c), "m"(zero)
+    //         : "rax");
+
+    //     printf("%d\n", flags);
 
     asm(".intel_syntax noprefix  \n\t" // STACK:
         "fld %2                  \n\t" // f_c
-        "fld %3                  \n\t" // 0, f_c
+        "fld %3                  \n\t" // f_a, f_c
+        "fmulp                   \n\t" // f_a*f_c
+        "fld %4                  \n\t" // 0, f_c
         "fcompp                  \n\t" // сравннить и вытолкнуть
         "fstsw ax                \n\t"
-        "test ax, 16640          \n\t" // Сравнить флаги с 4100h
-                                       // (если совпало,  то 0 больше f_c)
+        "cmp ax, 32              \n\t" // Сравнить флаги с 32 Я НЕ ЗНАЮ ПОЧЕМУ
+                                       // 32 оно вывелось из закоменченной
+                                       // вставки выше (если совпало,  то 0
+                                       // больше f_c)
         "jz from_mid_to_b        \n\t"
-        "fld %4                  \n\t" // mid
+        "fld %5                  \n\t" // mid
         "fstp %0                 \n\t" // mid -> left
         "jmp to_end              \n\t"
         "from_mid_to_b:          \n\t"
-        "fld %4                  \n\t" // mid
+        "fld %5                  \n\t" // mid
         "fstp %1                 \n\t" // mid -> right
         "to_end:                 \n\t"
-        : "=m"(left), "=m"(right)       // на выход %0, %1
-        : "m"(f_c), "m"(zero), "m"(mid) // на вход %2, %3, %4
+        : "=m"(left), "=m"(right)                 // на выход %0, %1
+        : "m"(f_c), "m"(f_a), "m"(zero), "m"(mid) // на вход %2, %3, %4
         : "ax");
   }
   //   printf("root from %lf to %lf\n", left, right);

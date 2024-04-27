@@ -11,7 +11,7 @@ SRCS := $(SRCS:.c=.d)
 SRCS := $(subst $(SRCPATH), $(OUTPATH), $(SRCS))
 
 BUILDFLAGS := -lm -m64
-CPPFLAGS := -std=c++20 -O0 -Wall -Wextra -Werror -I$(INCPATH) -masm=intel -m64 -fPIE -fno-inline
+CPPFLAGS := -std=c++20 -O0 -Wall -Wextra -Werror -I$(INCPATH) -masm=intel -m64 -fPIE -fno-inline #-DNO_TEST
 DEBUGFLAGS := -O0 -g3
 
 OBJECTS := $(OUTPATH)float_funcs.o $(OUTPATH)double_funcs.o $(OUTPATH)func_root.o $(OUTPATH)ldouble_funcs.o 
