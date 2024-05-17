@@ -59,7 +59,8 @@ double getMulCell(std::shared_ptr<double[]> m1, std::shared_ptr<double[]> m2,
   //       : "r"(pt1), "r"(pt2), "r"(length) // на вход %1, %2, %3
   //       : "rsi", "rdi", "rbx", "rcx", "xmm0", "xmm1", "xmm2");
 
-  for (size_t i = 0; i < length; ++i, ++pt1, ++pt2) {
+  for (size_t i = 0; i < length;
+       i += sizeof(__float128) / sizeof(double), ++pt1, ++pt2) {
     asm("movapd xmm0, %1        \n"
         "movapd xmm1, %2        \n"
         "mulpd  xmm0, xmm1      \n"
