@@ -10,3 +10,5 @@
 */out/
 .vscode
 crackme.exe.*
+*.img
+*/vmlinuz-run
